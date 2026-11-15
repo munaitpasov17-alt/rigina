@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Приглашение для Ригины</title>
+  <style>
+    :root {
+      --bg-color: #0d1117;
+      --card-bg: #161b22;
+      --gold: #d4af37;
+      --gold-hover: #f3e5ab;
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --accent-red: #da3633;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    .ornament-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      opacity: 0.05;
+      background-image: radial-gradient(var(--gold) 1px, transparent 0);
+      background-size: 24px 24px;
+      z-index: 1;
+    }
+
+    canvas#particleCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 480px;
+      background: var(--card-bg);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      position: relative;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .step {
+      display: none;
+      animation: fadeIn 0.4s ease-in-out forwards;
+    }
+
+    .step.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 {
+      color: var(--gold);
+      margin-bottom: 16px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    p {
+      color: var(--text-main);
+      line-height: 1.6;
+      margin-bottom: 20px;
+      font-size: 1.05rem;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #d4af37, #aa7c11);
+      color: #000;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin: 8px;
+    }
+
+    .btn:hover {
+      background: linear-gradient(135deg, #f3e5ab, #d4af37);
+      transform: translateY(-2px);
+    }
+
+    .btn-no {
+      background: #30363d;
+      color: var(--text-muted);
+      position: relative;
+    }
+
+    .btn-disabled {
+      opacity: 0.4;
+      cursor: not-allowed !important;
+      background: #21262d !important;
+      color: #484f58 !important;
+      border: 1px solid #30363d;
+    }
+
+    .coaster-box {
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 15px;
+      margin: 15px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .coaster-badge {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin: 15px 0;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      color: var(--gold);
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+
+    input[type="date"], input[type="time"] {
+      width: 100%;
+      padding: 10px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      color: #fff;
+      border-radius: 6px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+    }
+
+    .grid-menu {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .toast {
+      background: rgba(218, 54, 51, 0.2);
+      border: 1px solid var(--accent-red);
+      color: #ff7b72;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .donaza-alert {
+      background: rgba(212, 175, 55, 0.15);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 12px;
+      margin: 10px 0;
+      color: var(--gold-hover);
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+
+<div class="ornament-bg"></div>
+<canvas id="particleCanvas"></canvas>
+
+<div class="container">
+  
+  <!-- STEP 1: Intro -->
+  <div class="step active" id="step1">
+    <h2>Привет, Ригина! 👋</h2>
+    <p>Ригина, надеюсь букет белых роз понравился тебе и ты сейчас стоишь в шоке и с улыбкой в 32 зуба 😁</p>
+    <p>У тебя скоро день рождение - приглашаю вместе отметить в назначенный тобой день!</p>
+    <button class="btn" onclick="nextStep(2)">Далее ✨</button>
+  </div>
+
+  <!-- STEP 2: Yes/No Game -->
+  <div class="step" id="step2">
+    <h2>Пойдем отметим?</h2>
+    <p>Выбирай вариант ответа:</p>
+    <div style="min-height: 80px; display: flex; justify-content: center; align-items: center; gap: 15px; position: relative;">
+      <button class="btn" id="btnYes" onclick="handleYes()">ДА! 🎉</button>
+      <button class="btn btn-no" id="btnNo" onmouseover="moveNo()" onclick="moveNo()">Нет</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: Toyota Coaster -->
+  <div class="step" id="step3">
+    <h2>Трансфер подготовлен 🚐</h2>
+    <div class="coaster-box">
+      <div style="font-weight: bold; font-size: 1.1rem; color: var(--gold);">TOYOTA COASTER</div>
+      <div style="font-size: 0.9rem; color: var(--text-muted);">Экспресс до Фуджейры 🏔️</div>
+      <div class="coaster-badge" style="margin-top: 10px;">
+        ❄️ В этот раз кондер точно будет работать
+      </div>
+    </div>
+    
+    <div class="form-group">
+      <label>Выбери удобную дату:</label>
+      <input type="date" id="dateInput">
+    </div>
+    <div class="form-group">
+      <label>Выбери время:</label>
+      <input type="time" id="timeInput" value="18:00">
+    </div>
+
+    <button class="btn" onclick="saveDateTime()">Продолжить ➡️</button>
+  </div>
+
+  <!-- STEP 4: Kitchen Selection -->
+  <div class="step" id="step4">
+    <h2>Выбор кухни 🍽️</h2>
+    <p>Что предпочитаешь на ужин?</p>
+    
+    <div class="grid-menu">
+      <button class="btn btn-disabled" onclick="showDisabledNotice('Суши сейчас в отпуске 🍣')">Японская (Суши)</button>
+      <button class="btn btn-disabled" onclick="showDisabledNotice('Итальянская кухня временно недоступна 🍕')">Итальянская</button>
+      <button class="btn btn-disabled" onclick="showDisabledNotice('Грузинская кухня отдыхает 🥟')">Грузинская</button>
+      <button class="btn" onclick="selectNational()">Национальная кухня 🇰🇿</button>
+    </div>
+
+    <div class="toast" id="toastNotice"></div>
+    <div id="donazaBox" style="display:none;" class="donaza-alert">
+      <strong>Ресторан DONAZA 🏛️</strong><br>
+      <span style="font-size: 0.85rem; color: var(--text-main);">(Весь бюджет ушел на цветы и спецэффекты 😅)</span>
+    </div>
+
+    <button class="btn" id="btnStep4Next" style="display:none; margin-top: 15px;" onclick="nextStep(5)">Отлично! дальше ➡️</button>
+  </div>
+
+  <!-- STEP 5: WhatsApp Transfer -->
+  <div class="step" id="step5">
+    <h2>Договорились! ✨</h2>
+    <p style="font-style: italic; background: rgba(255,255,255,0.03); padding: 12px; border-radius: 8px;">
+      «Я не Лев Толстой, да и идея не моя. Но надеюсь на шанс, что твой вечер скрашу своей компанией.»
+    </p>
+    <p style="font-size: 0.95rem; color: var(--gold-hover); margin-top: 10px;">
+      💡 Кстати, ты очень красивая и обоятельная поэтому тебе не нужно быть при параде, главное удобная одежда.
+    </p>
+
+    <button class="btn" style="background: #25D366; color: #fff; width: 100%; margin-top: 15px;" onclick="sendWhatsApp()">
+      Отправить ответ в WhatsApp 💬
+    </button>
+  </div>
+
+</div>
+
+<script>
+  const MY_PHONE_NUMBER = "996500053036";
+  let selectedDate = "";
+  let selectedTime = "";
+  let yesScale = 1;
+
+  function nextStep(stepNum) {
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    document.getElementById('step' + stepNum).classList.add('active');
+  }
+
+  function moveNo() {
+    const btnNo = document.getElementById('btnNo');
+    const btnYes = document.getElementById('btnYes');
+    const x = Math.random() * 140 - 70;
+    const y = Math.random() * 100 - 50;
+    btnNo.style.transform = `translate(${x}px, ${y}px)`;
+    yesScale += 0.2;
+    btnYes.style.transform = `scale(${yesScale})`;
+  }
+
+  function handleYes() {
+    triggerConfetti();
+    nextStep(3);
+  }
+
+  function saveDateTime() {
+    selectedDate = document.getElementById('dateInput').value;
+    selectedTime = document.getElementById('timeInput').value;
+    if(!selectedDate) {
+      alert("Пожалуйста, выбери дату!");
+      return;
+    }
+    nextStep(4);
+  }
+
+  function showDisabledNotice(text) {
+    const toast = document.getElementById('toastNotice');
+    toast.innerText = text;
+    toast.style.display = 'block';
+    setTimeout(() => { toast.style.display = 'none'; }, 2500);
+  }
+
+  function selectNational() {
+    document.getElementById('donazaBox').style.display = 'block';
+    document.getElementById('btnStep4Next').style.display = 'inline-block';
+    triggerConfetti();
+  }
+
+  function sendWhatsApp() {
+    const text = `Привет! Принимаю приглашение 🎉\n\n📅 Дата: ${selectedDate}\n⏰ Время: ${selectedTime}\n🍽️ Кухня: Национальная (DONAZA)\n🚐 Трансфер: Toyota Coaster (Экспресс до Фуджейры)`;
+    const encoded = encodeURIComponent(text);
+    window.open(`https://wa.me/${MY_PHONE_NUMBER}?text=${encoded}`, '_blank');
+  }
+
+  const canvas = document.getElementById('particleCanvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  function triggerConfetti() {
+    for(let i = 0; i < 50; i++) {
+      particles.push({
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        vx: (Math.random() - 0.5) * 12,
+        vy: (Math.random() - 0.5) * 12 - 3,
+        size: Math.random() * 4 + 2,
+        color: ['#d4af37', '#f3e5ab', '#ffffff'][Math.floor(Math.random() * 3)],
+        alpha: 1
+      });
+    }
+  }
+
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((p, index) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.alpha -= 0.015;
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = Math.max(p.alpha, 0);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+
+      if(p.alpha <= 0) particles.splice(index, 1);
+    });
+    requestAnimationFrame(animateParticles);
+  }
+  animateParticles();
+</script>
+
+</body>
+</html>
